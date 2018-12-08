@@ -3,3 +3,5 @@ A simple implementation of an vtt to srt converter. These filetypes are used for
 
 If you encounter an issue using this please open an issue report.
 If you want to commit any improvents you are free to make pull request.
+
+There is also an [implementation in java](https://github.com/john2ksonn/vtt2srt_java)
