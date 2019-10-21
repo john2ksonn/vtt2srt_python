@@ -58,5 +58,3 @@ def cleanCueLine(lines):
 
 if __name__ == '__main__':
     convert()
-
-
