@@ -1,61 +1,31 @@
 #!/usr/bin/python
-from __future__ import print_function
 from sys import stdin
-from os.path import join
+import re
 
-def convert():
+def convert(source):
     counter = 1
-    cue_flag = False
-    cue = ''
+    # match for the timestamp, an arrow and the other timestamp
+    # also match opional padding between the timestamps and the arrow
+    timing_regex = '([\d\:\.]{12,})\s*-->\s*([\d\:\.]{12,})'
 
-    #iterate through every line
-    for line in stdin:
-        if isTimingLine(line) and not cue_flag:
-            cue_flag = True
+    for line in source:
+        line = line.strip()
+        matches = re.findall(timing_regex, line)
+        if len(matches) != 0:
             print(counter)
-            counter += 1
-            print(cleanTimingLine(line), end = '')
-        elif cue_flag:
-            if isTimingLine(line) or str(line).startswith('\n'):
-                print(cleanCueLine(cue), end = '')
-                cue_flag = False
-                print('\n', end = '')
-                cue = ''
-            else:
-                cue += line
+            counter+=1
+            print(line.replace('.', ','))
+            res = readUntilLine(source, '\n')
+            print(res)
 
-
-def isTimingLine(line):
-    #return True if the line starts like a timing line and conatins an '-->'
-    return (line[0].isdigit() and line[1].isdigit()
-    and line[2] == ':' and line[5] == ':'
-    and '-->' in line)
-
-#removes any extra stuff that is not required
-def cleanTimingLine(line):
-    clean_line = ""
-    for ch in line.strip():
-        #in case of an alphabetic character retun
-        if ch.isalpha():
-            break
-        clean_line += ch
-    return clean_line.replace(".", ",") + '\n'
-
-#removes the '\n' in the cue, removes any tags
-#and returns the cue as single line with a '\n' at the end
-def cleanCueLine(lines):
-    tag_flag = False
-    line = lines#.replace('\n', ' ')
-    clean_line = ""
-    for ch in line:
-        if ch == '<':
-            tag_flag = True
-        elif ch == '>':
-            tag_flag = False
-        elif not tag_flag:
-            clean_line += ch
-    return clean_line.strip('\n') + '\n'
+def readUntilLine(source, delimiter):
+    result = ""
+    for line in source:
+        if (line == delimiter):
+            return result
+        result += line
+    return result
 
 if __name__ == '__main__':
-    convert()
+    convert(stdin)
 
